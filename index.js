@@ -47,6 +47,26 @@ io.on("connection", (socket) => {
   socket.on("answerCall", (data) => {
     io.to(data.to).emit("callAccepted", data.signal);
   });
+
+
+  socket.on("syncLog", ({ to, log, noFaceCount, multiFaceCount, globalViolations }) => {
+    io.to(to).emit("receivedLog", { log, noFaceCount, multiFaceCount, globalViolations });
+  });
+
+  socket.on("syncViolations", ({ to, count }) => {
+    io.to(to).emit("syncViolations", { count });
+  });
+
+  socket.on("terminateExam", ({ to, globalViolations }) => {
+    io.to(to).emit("examTerminated");
+  });
+
+  // Add this event handler in your socket.io server
+  socket.on("endCall", (data) => {
+
+    io.to(data.to).emit("callEnded", { from: data.from });
+  
+  });
 });
 
 // Start the server
